@@ -1,3 +1,47 @@
+# 🔄 SwapX - A Decentralized Exchange (DEX) on Ethereum
+
+**SwapX** is a decentralized exchange (DEX) inspired by [Uniswap V2](https://docs.uniswap.org/protocol/V2/), built for Ethereum-compatible blockchains. It enables users to swap ERC-20 tokens, provide liquidity, and earn fees — all in a fast, trustless, and non-custodial way.
+
+---
+
+## 🚀 Features
+
+- 💱 Swap any ERC-20 token pair
+- 🧪 Deploy on Ethereum Sepolia testnet
+- 💧 Provide & remove liquidity
+- 🧠 AMM model (Constant Product Formula)
+- 🔐 Non-custodial, Smart Contract-driven
+- 🌐 Connect via MetaMask
+
+---
+
+## 🧰 Tech Stack
+
+| Layer     | Tech                         |
+|-----------|------------------------------|
+| 💻 Frontend | Next.js, TailwindCSS, Ethers.js, Wagmi, RainbowKit |
+| 🧠 Smart Contracts | Solidity, Foundry (Forge) |
+| 📦 Tokens | ERC-20 Standard |
+| 🌐 Network | Ethereum Sepolia Testnet |
+
+---
+
+##Diagram Stuff 
+
+).
+<img width="3840" height="1141" alt="swapxsequence" src="https://github.com/user-attachments/assets/097dd704-1e71-4550-ac11-d1f8addcde9a" />
+
+
+
+
+
+
+
+
+
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
