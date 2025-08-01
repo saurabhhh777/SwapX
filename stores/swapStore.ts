@@ -1,14 +1,12 @@
+"use client";
+
 import { create } from 'zustand';
 
 interface SwapState {
-  amountIn: bigint | null;
-  amountOut: bigint | null;
-  slippage: number; // in percent (0.5 = 0.5%)
-  txHash: string | null;
+  slippage: number;
   isSwapping: boolean;
+  txHash: string | null;
   swapError: string | null;
-  setAmountIn: (amount: bigint) => void;
-  setAmountOut: (amount: bigint) => void;
   setSlippage: (slippage: number) => void;
   startSwap: () => void;
   completeSwap: (txHash: string) => void;
@@ -16,37 +14,14 @@ interface SwapState {
   resetSwap: () => void;
 }
 
-const initialState = {
-  amountIn: null,
-  amountOut: null,
-  slippage: 0.5,
-  txHash: null,
-  isSwapping: false,
-  swapError: null
-};
-
 export const useSwapStore = create<SwapState>((set) => ({
-  ...initialState,
-  
-  setAmountIn: (amount) => set({ amountIn: amount }),
-  setAmountOut: (amount) => set({ amountOut: amount }),
+  slippage: 0.5,
+  isSwapping: false,
+  txHash: null,
+  swapError: null,
   setSlippage: (slippage) => set({ slippage }),
-  
-  startSwap: () => set({ 
-    isSwapping: true,
-    swapError: null,
-    txHash: null
-  }),
-  
-  completeSwap: (txHash) => set({ 
-    isSwapping: false,
-    txHash
-  }),
-  
-  failSwap: (error) => set({ 
-    isSwapping: false,
-    swapError: error
-  }),
-  
-  resetSwap: () => set(initialState)
+  startSwap: () => set({ isSwapping: true, swapError: null, txHash: null }),
+  completeSwap: (txHash) => set({ isSwapping: false, txHash }),
+  failSwap: (error) => set({ isSwapping: false, swapError: error }),
+  resetSwap: () => set({ isSwapping: false, txHash: null, swapError: null }),
 }));

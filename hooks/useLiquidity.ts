@@ -1,3 +1,4 @@
+'use client';
 import { useAccount, useWriteContract } from 'wagmi';
 import { swapXRouterABI } from '@/constants/abis';
 import { SWAPX_ROUTER_ADDRESS } from '@/constants/addresses';

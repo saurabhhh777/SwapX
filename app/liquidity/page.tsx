@@ -1,3 +1,5 @@
+'use client';
+
 import { AddLiquidityForm, RemoveLiquidityForm } from '@/components/LiquidityForms';
 
 export default function LiquidityPage() {

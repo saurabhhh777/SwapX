@@ -1,30 +1,33 @@
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
-import { getTokensForChain } from '@/constants/tokens';
-import { useTokenStore } from '@/stores/tokenStore';
+"use client";
 
-export function useWallet() {
-  const { address, isConnected, chainId } = useAccount();
-  const { connectors, connect, error: connectError } = useConnect();
-  const { disconnect } = useDisconnect();
-  const { setFromToken, setToToken } = useTokenStore();
+import { create } from 'zustand';
+import { tokens } from '@/constants/tokens';
 
-  // When chain changes, update tokens
-  if (chainId) {
-    const chainTokens = getTokensForChain(chainId);
-    if (chainTokens.length > 0) {
-      // Update token store with new chain tokens
-      setFromToken(chainTokens[0]);
-      setToToken(chainTokens[1] || chainTokens[0]);
-    }
-  }
-
-  return {
-    address,
-    chainId,
-    isConnected,
-    connectors,
-    connect,
-    disconnect,
-    connectError
-  };
+interface Token {
+  address: string;
+  symbol: string;
+  decimals: number;
+  logo: string;
 }
+
+interface TokenState {
+  fromToken: Token;
+  toToken: Token;
+  amountIn: bigint | null;
+  amountOut: bigint | null;
+  setFromToken: (token: Token) => void;
+  setToToken: (token: Token) => void;
+  setAmountIn: (amount: bigint | null) => void;
+  setAmountOut: (amount: bigint | null) => void;
+}
+
+export const useTokenStore = create<TokenState>((set) => ({
+  fromToken: tokens[0],
+  toToken: tokens[1],
+  amountIn: null,
+  amountOut: null,
+  setFromToken: (token) => set({ fromToken: token }),
+  setToToken: (token) => set({ toToken: token }),
+  setAmountIn: (amount) => set({ amountIn: amount }),
+  setAmountOut: (amount) => set({ amountOut: amount }),
+}));

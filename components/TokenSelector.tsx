@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { tokens, Token } from '@/constants/tokens';
 

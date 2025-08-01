@@ -1,11 +1,11 @@
 import './globals.css';
-import Navbar from '@/components/Navbar';
+import ClientNavbar from '@/components/ClientNavbar';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="bg-gray-50 min-h-screen">
-        <Navbar />
+        <ClientNavbar />
         <main className="container mx-auto p-4">
           {children}
         </main>

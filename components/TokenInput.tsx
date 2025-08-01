@@ -1,10 +1,12 @@
+'use client';
 import TokenSelector from './TokenSelector';
+import { Token } from '@/constants/tokens';
 
 interface TokenInputProps {
-  token: any;
-  onChangeToken: (token: any) => void;
+  token: Token;
+  onChangeToken: (token: Token) => void;
   label?: string;
-  amount?: bigint;
+  amount?: bigint | null;
   onAmountChange?: (value: string) => void;
   displayValue?: string;
   readOnly?: boolean;

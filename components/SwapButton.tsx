@@ -1,4 +1,6 @@
-import { Spinner } from './Spinner';
+"use client";
+
+import Spinner from './Spinner';
 
 interface SwapButtonProps {
   onClick: () => void;
@@ -29,4 +31,3 @@ export default function SwapButton({ onClick, isLoading, disabled }: SwapButtonP
   );
 }
 
-// Simple Spinner component

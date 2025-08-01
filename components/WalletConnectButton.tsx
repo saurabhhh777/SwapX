@@ -1,9 +1,23 @@
+"use client";
+
+import { useEffect, useState } from 'react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
 export default function WalletConnectButton() {
+  const [mounted, setMounted] = useState(false);
   const { address, isConnected } = useAccount();
   const { connectors, connect } = useConnect();
   const { disconnect } = useDisconnect();
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return (
+      <button className="bg-gray-300 text-white px-4 py-2 rounded-lg animate-pulse">
+        Loading...
+      </button>
+    );
+  }
 
   if (isConnected) {
     return (
@@ -21,7 +35,7 @@ export default function WalletConnectButton() {
       <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">
         Connect Wallet
       </button>
-      <div className="absolute hidden group-hover:block bg-white shadow-lg rounded-lg mt-1">
+      <div className="absolute hidden group-hover:block bg-white shadow-lg rounded-lg mt-1 w-48 right-0">
         {connectors.map((connector: any) => (
           <button
             key={connector.uid}

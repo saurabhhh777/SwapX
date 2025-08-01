@@ -1,5 +1,12 @@
-import WalletConnectButton from './WalletConnectButton';
+"use client";
+
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
+
+const WalletConnectButton = dynamic(
+  () => import('@/components/WalletConnectButton'),
+  { ssr: false }
+);
 
 export default function Navbar() {
   return (
@@ -17,9 +24,6 @@ export default function Navbar() {
               </Link>
               <Link href="/liquidity" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">
                 Liquidity
-              </Link>
-              <Link href="/dashboard" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">
-                Dashboard
               </Link>
             </div>
           </div>
