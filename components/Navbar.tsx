@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import logo from "@public/favicon.ico"
 
 const WalletConnectButton = dynamic(
   () => import('@/components/WalletConnectButton'),
@@ -15,7 +16,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <img className="h-8 w-auto" src="/logo.svg" alt="SwapX" />
+              <img className="h-8 w-auto" src="/logo.png" alt="SwapX" />
               <span className="ml-2 text-xl font-bold text-gray-900">SwapX</span>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
