@@ -2,6 +2,7 @@
 
 **SwapX** is a decentralized exchange (DEX) inspired by [Uniswap V2](https://docs.uniswap.org/protocol/V2/), built for Ethereum-compatible blockchains. It enables users to swap ERC-20 tokens, provide liquidity, and earn fees — all in a fast, trustless, and non-custodial way.
 
+
 ---
 
 ## 🚀 Features
