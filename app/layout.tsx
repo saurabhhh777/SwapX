@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-gray-50 min-h-screen">
         <Providers>
           <Navbar />
-          <main className="container mx-auto p-4">
+          <main>
             {children}
           </main>
         </Providers>

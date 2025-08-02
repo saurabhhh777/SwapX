@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import type { Connector } from 'wagmi';
 
 export default function WalletConnectButton() {
   const [mounted, setMounted] = useState(false);
@@ -36,7 +37,7 @@ export default function WalletConnectButton() {
         Connect Wallet
       </button>
       <div className="absolute hidden group-hover:block bg-white shadow-lg rounded-lg mt-1 w-48 right-0">
-        {connectors.map((connector: any) => (
+        {connectors.map((connector: Connector) => (
           <button
             key={connector.uid}
             onClick={() => connect({ connector })}

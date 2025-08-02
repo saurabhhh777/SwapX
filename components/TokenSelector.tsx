@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Image from 'next/image';
 import { tokens, Token } from '@/constants/tokens';
 
 interface TokenSelectorProps {
@@ -16,7 +17,7 @@ export default function TokenSelector({ selectedToken, onSelect }: TokenSelector
         className="flex items-center space-x-2 p-2 bg-gray-100 rounded-lg"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <img src={selectedToken.logo} alt={selectedToken.symbol} className="w-6 h-6" />
+        <Image src={selectedToken.logo} alt={selectedToken.symbol} className="w-6 h-6" width={24} height={24} />
         <span>{selectedToken.symbol}</span>
       </button>
       
@@ -31,7 +32,7 @@ export default function TokenSelector({ selectedToken, onSelect }: TokenSelector
                 setIsOpen(false);
               }}
             >
-              <img src={token.logo} alt={token.symbol} className="w-6 h-6 mr-2" />
+              <Image src={token.logo} alt={token.symbol} className="w-6 h-6 mr-2" width={24} height={24} />
               <span>{token.symbol}</span>
             </div>
           ))}
