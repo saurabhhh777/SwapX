@@ -27,7 +27,9 @@
 
 ---
 
-##Diagram Stuff 
+## Diagram Stuff 
+<img width="1907" height="929" alt="Image" src="https://github.com/user-attachments/assets/93ce34d8-2d7c-4ca8-ba0e-17a0bc1d8d7e" />
+
 
 code flow 
 

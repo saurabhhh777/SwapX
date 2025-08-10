@@ -40,13 +40,13 @@ export function AddLiquidityForm() {
   };
 
   return (
-    <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl overflow-hidden">
-      <div className="p-6 border-b border-gray-700">
-        <h2 className="text-xl font-bold flex items-center">
-          <Plus className="mr-2 text-green-400" />
+    <div className="bg-card border border-border rounded-3xl overflow-hidden">
+      <div className="p-6 border-b border-border">
+        <h2 className="text-xl font-bold flex items-center font-poppins">
+          <Plus className="mr-2 text-foreground" />
           Add Liquidity
         </h2>
-        <p className="text-gray-400 text-sm mt-1">
+        <p className="text-muted text-sm mt-1">
           Provide tokens to the liquidity pool
         </p>
       </div>
@@ -61,9 +61,10 @@ export function AddLiquidityForm() {
           balance={1000000000000000000n}
         />
         
-        <div className="flex justify-center">
-          <div className="bg-gray-800 p-2 rounded-full">
-            <ChevronsDown className="h-5 w-5 text-blue-400" />
+        <div className="relative my-1">
+          <div className="w-full h-px bg-border" />
+          <div className="absolute left-1/2 -translate-x-1/2 -top-4 bg-card border border-border shadow-sm p-2 rounded-full">
+            <ChevronsDown className="h-5 w-5 text-foreground" />
           </div>
         </div>
         
@@ -84,10 +85,10 @@ export function AddLiquidityForm() {
         <button
           onClick={handleAddLiquidity}
           disabled={!amountA || !amountB || isLoading}
-          className={`w-full py-3 px-4 rounded-xl text-white font-semibold ${
+          className={`w-full py-4 px-6 rounded-full font-semibold ${
             !amountA || !amountB || isLoading
-              ? 'bg-gray-700 cursor-not-allowed'
-              : 'bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700'
+              ? 'bg-border text-muted cursor-not-allowed'
+              : 'bg-black text-white hover:bg-gray-900'
           } transition-colors flex items-center justify-center`}
         >
           {isLoading ? (
@@ -132,13 +133,13 @@ export function RemoveLiquidityForm() {
   const estimatedTokenB = liquidityAmount ? liquidityAmount / 2n : 0n;
 
   return (
-    <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl overflow-hidden">
-      <div className="p-6 border-b border-gray-700">
-        <h2 className="text-xl font-bold flex items-center">
-          <Minus className="mr-2 text-red-400" />
+    <div className="bg-card border border-border rounded-3xl overflow-hidden">
+      <div className="p-6 border-b border-border">
+        <h2 className="text-xl font-bold flex items-center font-poppins">
+          <Minus className="mr-2 text-foreground" />
           Remove Liquidity
         </h2>
-        <p className="text-gray-400 text-sm mt-1">
+        <p className="text-muted text-sm mt-1">
           Withdraw tokens from the liquidity pool
         </p>
       </div>
@@ -146,8 +147,8 @@ export function RemoveLiquidityForm() {
       <div className="p-6 space-y-6">
         <div>
           <div className="flex justify-between mb-2">
-            <span className="text-sm font-medium text-gray-300">LP Tokens</span>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm font-medium text-foreground">LP Tokens</span>
+            <span className="text-sm text-muted">
               Balance: {formatTokenAmount(1000000000000000000n, 18, 4)}
             </span>
           </div>
@@ -157,15 +158,16 @@ export function RemoveLiquidityForm() {
               placeholder="0.0"
               value={liquidityAmount ? (Number(liquidityAmount) / 10 ** 18).toString() : ''}
               onChange={(e) => handleLiquidityChange(e.target.value)}
-              className="w-full p-4 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-4 bg-card border border-border rounded-2xl text-foreground focus:outline-none"
             />
-            <div className="absolute right-4 top-4 text-gray-400">LP</div>
+            <div className="absolute right-4 top-4 text-muted">LP</div>
           </div>
         </div>
         
-        <div className="flex justify-center">
-          <div className="bg-gray-800 p-2 rounded-full">
-            <ChevronsDown className="h-5 w-5 text-blue-400" />
+        <div className="relative my-1">
+          <div className="w-full h-px bg-border" />
+          <div className="absolute left-1/2 -translate-x-1/2 -top-4 bg-card border border-border shadow-sm p-2 rounded-full">
+            <ChevronsDown className="h-5 w-5 text-foreground" />
           </div>
         </div>
         
@@ -184,10 +186,10 @@ export function RemoveLiquidityForm() {
         <button
           onClick={handleRemoveLiquidity}
           disabled={!liquidityAmount || isLoading}
-          className={`w-full py-3 px-4 rounded-xl text-white font-semibold ${
+          className={`w-full py-4 px-6 rounded-full font-semibold ${
             !liquidityAmount || isLoading
-              ? 'bg-gray-700 cursor-not-allowed'
-              : 'bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700'
+              ? 'bg-border text-muted cursor-not-allowed'
+              : 'bg-black text-white hover:bg-gray-900'
           } transition-colors flex items-center justify-center`}
         >
           {isLoading ? (
@@ -218,8 +220,8 @@ function TokenInputWithBalance({ token, onChangeToken, label, amount, onAmountCh
   return (
     <div>
       <div className="flex justify-between mb-2">
-        <span className="text-sm font-medium text-gray-300">{label}</span>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm font-medium text-foreground">{label}</span>
+        <span className="text-sm text-muted">
           Balance: {formatTokenAmount(balance, token.decimals, 4)}
         </span>
       </div>
@@ -228,7 +230,9 @@ function TokenInputWithBalance({ token, onChangeToken, label, amount, onAmountCh
         onChangeToken={onChangeToken} 
         amount={amount}
         onAmountChange={onAmountChange}
-        theme="dark"
+        theme="light"
+        size="large"
+        className="rounded-2xl border-border bg-card"
       />
     </div>
   );
@@ -240,23 +244,23 @@ function PoolInfo({ share, lpTokens, fees }: {
   fees?: string;
 }) {
   return (
-    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+    <div className="bg-card rounded-lg p-4 border border-border">
       {lpTokens !== undefined && (
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-gray-400">LP Tokens</span>
-          <span className="font-medium">
+          <span className="text-muted">LP Tokens</span>
+          <span className="font-medium text-foreground">
             {lpTokens ? formatTokenAmount(lpTokens, 18, 6) : '0.0'}
           </span>
         </div>
       )}
       <div className="flex justify-between text-sm">
-        <span className="text-gray-400">Pool Share</span>
-        <span className="font-medium">{share}</span>
+        <span className="text-muted">Pool Share</span>
+        <span className="font-medium text-foreground">{share}</span>
       </div>
       {fees && (
         <div className="flex justify-between text-sm mt-2">
-          <span className="text-gray-400">Fee Earnings</span>
-          <span className="font-medium">{fees}</span>
+          <span className="text-muted">Fee Earnings</span>
+          <span className="font-medium text-foreground">{fees}</span>
         </div>
       )}
     </div>
@@ -270,25 +274,25 @@ function EstimatedReturns({ tokenA, tokenB, amountA, amountB }: {
   amountB: bigint;
 }) {
   return (
-    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-      <h3 className="text-sm font-medium text-gray-300 mb-3">You will receive:</h3>
+    <div className="bg-card rounded-lg p-4 border border-border">
+      <h3 className="text-sm font-medium text-foreground mb-3">You will receive:</h3>
       
       <div className="flex items-center justify-between py-2">
         <div className="flex items-center">
-          <div className="bg-blue-500 w-8 h-8 rounded-full mr-2"></div>
-          <span>{tokenA.symbol}</span>
+          <div className="w-8 h-8 rounded-full mr-2 bg-foreground"></div>
+          <span className="text-foreground">{tokenA.symbol}</span>
         </div>
-        <span className="font-medium">
+        <span className="font-medium text-foreground">
           {formatTokenAmount(amountA, tokenA.decimals, 6)}
         </span>
       </div>
       
       <div className="flex items-center justify-between py-2">
         <div className="flex items-center">
-          <div className="bg-purple-500 w-8 h-8 rounded-full mr-2"></div>
-          <span>{tokenB.symbol}</span>
+          <div className="w-8 h-8 rounded-full mr-2 bg-muted"></div>
+          <span className="text-foreground">{tokenB.symbol}</span>
         </div>
-        <span className="font-medium">
+        <span className="font-medium text-foreground">
           {formatTokenAmount(amountB, tokenB.decimals, 6)}
         </span>
       </div>

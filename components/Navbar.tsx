@@ -42,10 +42,10 @@ export default function Navbar() {
         {/* Logo + Brand */}
         <div className="flex items-center space-x-3">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 h-8 w-8 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-sm">SX</span>
+            <div className="h-8 w-8 rounded-full bg-foreground flex items-center justify-center">
+              <span className="text-background font-poppins font-bold text-sm">SX</span>
             </div>
-            <span className="text-xl font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            <span className="text-xl font-semibold font-poppins">
               SwapX
             </span>
           </Link>
@@ -66,7 +66,7 @@ export default function Navbar() {
               aria-current={pathname === link.href ? "page" : undefined}
             >
               {link.icon}
-              <span>{link.label}</span>
+              <span className="font-poppins">{link.label}</span>
             </Link>
           ))}
         </div>
@@ -102,7 +102,7 @@ export default function Navbar() {
         <div className="md:hidden bg-card/95 backdrop-blur-sm border-t border-border">
           <div className="px-4 py-3 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-muted">Theme</span>
+              <span className="text-sm text-muted font-poppins">Theme</span>
               <button
                 aria-label="Toggle theme"
                 onClick={() => { toggleTheme(); setMobileMenuOpen(false); }}
@@ -125,7 +125,7 @@ export default function Navbar() {
                 aria-current={pathname === link.href ? "page" : undefined}
               >
                 {link.icon}
-                <span>{link.label}</span>
+                <span className="font-poppins">{link.label}</span>
               </Link>
             ))}
           </div>

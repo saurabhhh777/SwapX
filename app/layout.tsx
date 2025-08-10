@@ -2,17 +2,11 @@
 import './globals.css';
 import Providers from '@/components/Providers';
 import Navbar from '@/components/Navbar';
-import { Poppins } from 'next/font/google';
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  display: 'swap',
-});
+import { poppins, jost } from '@/lib/fonts';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={poppins.className}>
+    <html lang="en" className={`${poppins.variable} ${jost.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
@@ -21,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#3B82F6" />
       </head>
-      <body className="bg-background text-foreground min-h-screen">
+      <body className="bg-background text-foreground min-h-screen font-jost">
         <Providers>
           <Navbar />
           <main>
