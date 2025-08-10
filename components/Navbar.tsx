@@ -4,8 +4,9 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { ArrowRightLeft, Coins, Menu, X, BarChart } from "lucide-react";
+import { ArrowRightLeft, Coins, Menu, X, BarChart, Sun, Moon } from "lucide-react";
 import { useState } from "react";
+import { useThemeStore } from "@/stores/themeStore";
 
 const WalletConnectButton = dynamic(
   () => import("@/components/WalletConnectButton"),
@@ -33,9 +34,10 @@ const navLinks = [
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useThemeStore();
 
   return (
-    <nav className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-50">
+    <nav className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo + Brand */}
         <div className="flex items-center space-x-3">
@@ -58,8 +60,8 @@ export default function Navbar() {
               className={cn(
                 "flex items-center space-x-2 text-sm font-medium transition-colors px-3 py-2 rounded-lg",
                 pathname === link.href
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                  ? "bg-background text-foreground border border-border"
+                  : "text-muted hover:text-foreground hover:bg-background"
               )}
               aria-current={pathname === link.href ? "page" : undefined}
             >
@@ -69,13 +71,21 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Wallet Connect + Mobile Menu Button */}
-        <div className="flex items-center space-x-4">
+        {/* Wallet Connect + Theme + Mobile Menu Button */}
+        <div className="flex items-center space-x-3">
+          <button
+            aria-label="Toggle theme"
+            onClick={toggleTheme}
+            className="hidden md:inline-flex items-center justify-center h-9 w-9 rounded-full border border-border bg-card hover:bg-background"
+            title={theme === 'light' ? 'Switch to dark' : 'Switch to light'}
+          >
+            {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          </button>
           <WalletConnectButton />
           
           {/* Mobile menu button */}
           <button
-            className="md:hidden text-gray-400 hover:text-white focus:outline-none"
+            className="md:hidden text-muted hover:text-foreground focus:outline-none"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
@@ -89,8 +99,18 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-gray-900/95 backdrop-blur-sm border-t border-gray-800">
+        <div className="md:hidden bg-card/95 backdrop-blur-sm border-t border-border">
           <div className="px-4 py-3 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted">Theme</span>
+              <button
+                aria-label="Toggle theme"
+                onClick={() => { toggleTheme(); setMobileMenuOpen(false); }}
+                className="inline-flex items-center justify-center h-9 w-9 rounded-full border border-border bg-card hover:bg-background"
+              >
+                {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+              </button>
+            </div>
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -98,8 +118,8 @@ export default function Navbar() {
                 className={cn(
                   "flex items-center space-x-3 text-sm font-medium transition-colors px-3 py-3 rounded-lg",
                   pathname === link.href
-                    ? "bg-gray-800 text-white"
-                    : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                    ? "bg-background text-foreground border border-border"
+                    : "text-muted hover:text-foreground hover:bg-background"
                 )}
                 onClick={() => setMobileMenuOpen(false)}
                 aria-current={pathname === link.href ? "page" : undefined}

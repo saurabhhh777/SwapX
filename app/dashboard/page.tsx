@@ -1,6 +1,8 @@
 import { BarChart, PieChart } from "@/components/Charts";
 import { TokenRow } from "@/components/Tokens";
 import { ArrowUpRight, ArrowRightLeft, Clock, Coins, PieChart as PieChartIcon, RefreshCw, Wallet } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Dashboard() {
   // Mock data - replace with real data from your app
@@ -24,145 +26,156 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-6">
+    <div className="min-h-screen bg-background text-foreground p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-            <p className="text-gray-400">Overview of your SwapX activity and portfolio</p>
+            <p className="text-muted">Overview of your SwapX activity and portfolio</p>
           </div>
-          <button className="flex items-center text-sm bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg px-4 py-2 mt-4 md:mt-0">
+          <Button variant="outline" className="mt-4 md:mt-0">
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh Data
-          </button>
+          </Button>
         </div>
 
         {/* Portfolio Summary */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-4">
+          <Card className="bg-card/80 border-border">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold flex items-center">
+                  <Wallet className="h-5 w-5 mr-2 text-blue-400" />
+                  Portfolio Value
+                </h2>
+                <span className={`text-sm flex items-center ${
+                  portfolioChange >= 0 ? 'text-green-500' : 'text-red-500'
+                }`}>
+                  {portfolioChange >= 0 ? '+' : ''}{portfolioChange}%
+                  <ArrowUpRight className="h-4 w-4 ml-1" />
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold mb-2">${portfolioValue.toLocaleString()}</p>
+              <p className="text-muted text-sm">Across all chains and tokens</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card/80 border-border">
+            <CardHeader>
               <h2 className="text-lg font-semibold flex items-center">
-                <Wallet className="h-5 w-5 mr-2 text-blue-400" />
-                Portfolio Value
+                <PieChartIcon className="h-5 w-5 mr-2 text-purple-400" />
+                Asset Allocation
               </h2>
-              <span className={`text-sm flex items-center ${
-                portfolioChange >= 0 ? 'text-green-400' : 'text-red-400'
-              }`}>
-                {portfolioChange >= 0 ? '+' : ''}{portfolioChange}%
-                <ArrowUpRight className="h-4 w-4 ml-1" />
-              </span>
-            </div>
-            <p className="text-3xl font-bold mb-2">${portfolioValue.toLocaleString()}</p>
-            <p className="text-gray-400 text-sm">Across all chains and tokens</p>
-          </div>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[120px]">
+                <PieChart data={[
+                  { name: 'ETH', value: 6050, color: '#3B82F6' },
+                  { name: 'USDC', value: 3500, color: '#2775CA' },
+                  { name: 'SWAPX', value: 2500, color: '#8B5CF6' },
+                ]} />
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold flex items-center mb-4">
-              <PieChartIcon className="h-5 w-5 mr-2 text-purple-400" />
-              Asset Allocation
-            </h2>
-            <div className="h-[120px]">
-              <PieChart data={[
-                { name: 'ETH', value: 6050, color: '#3B82F6' },
-                { name: 'USDC', value: 3500, color: '#2775CA' },
-                { name: 'SWAPX', value: 2500, color: '#8B5CF6' },
-              ]} />
-            </div>
-          </div>
-
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold flex items-center mb-4">
-              <Coins className="h-5 w-5 mr-2 text-yellow-400" />
-              Liquidity Positions
-            </h2>
-            <p className="text-3xl font-bold mb-2">${(8420.50 + 3120.75).toLocaleString()}</p>
-            <p className="text-gray-400 text-sm">Across {liquidityPositions.length} pools</p>
-          </div>
+          <Card className="bg-card/80 border-border">
+            <CardHeader>
+              <h2 className="text-lg font-semibold flex items-center">
+                <Coins className="h-5 w-5 mr-2 text-yellow-400" />
+                Liquidity Positions
+              </h2>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold mb-2">${(8420.50 + 3120.75).toLocaleString()}</p>
+              <p className="text-muted text-sm">Across {liquidityPositions.length} pools</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Token Balances */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Your Token Balances</h2>
-            <button className="text-sm text-blue-400 hover:text-blue-300">
+        <Card className="bg-card/80 border-border mb-8">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Your Token Balances</CardTitle>
+            <Button variant="ghost" className="text-blue-500 hover:text-blue-400">
               View All
-            </button>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left text-gray-400 border-b border-gray-700">
-                  <th className="pb-3">Asset</th>
-                  <th className="pb-3 text-right">Amount</th>
-                  <th className="pb-3 text-right">Value</th>
-                  <th className="pb-3 text-right">24h Change</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tokenBalances.map((token) => (
-                  <TokenRow key={token.symbol} {...token} />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-muted border-b border-border">
+                    <th className="pb-3">Asset</th>
+                    <th className="pb-3 text-right">Amount</th>
+                    <th className="pb-3 text-right">Value</th>
+                    <th className="pb-3 text-right">24h Change</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tokenBalances.map((token) => (
+                    <TokenRow key={token.symbol} {...token} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Recent Swaps */}
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
-            <div className="flex justify-between items-center mb-6">
+          <Card className="bg-card/80 border-border">
+            <CardHeader className="flex flex-row items-center justify-between">
               <h2 className="text-xl font-semibold flex items-center">
                 <ArrowRightLeft className="h-5 w-5 mr-2 text-green-400" />
                 Recent Swaps
               </h2>
-              <button className="text-sm text-blue-400 hover:text-blue-300">
-                View All
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              {recentSwaps.map((swap, index) => (
-                <div key={index} className="flex justify-between items-center p-3 hover:bg-gray-800/30 rounded-lg transition-colors">
-                  <div>
-                    <div className="font-medium">
-                      {swap.amount} {swap.from} → {swap.to}
+              <Button variant="ghost" className="text-blue-500 hover:text-blue-400">View All</Button>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {recentSwaps.map((swap, index) => (
+                  <div key={index} className="flex justify-between items-center p-3 hover:bg-background rounded-lg transition-colors border border-transparent hover:border-border">
+                    <div>
+                      <div className="font-medium">
+                        {swap.amount} {swap.from} → {swap.to}
+                      </div>
+                      <div className="flex items-center text-sm text-muted mt-1">
+                        <Clock className="h-3 w-3 mr-1" />
+                        {swap.time}
+                      </div>
                     </div>
-                    <div className="flex items-center text-sm text-gray-400 mt-1">
-                      <Clock className="h-3 w-3 mr-1" />
-                      {swap.time}
+                    <div className="text-right">
+                      <div className="font-medium">${swap.value.toLocaleString()}</div>
+                      <div className="text-sm text-muted">Completed</div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-medium">${swap.value.toLocaleString()}</div>
-                    <div className="text-sm text-gray-400">Completed</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Liquidity Positions */}
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
-            <div className="flex justify-between items-center mb-6">
+          <Card className="bg-card/80 border-border">
+            <CardHeader className="flex flex-row items-center justify-between">
               <h2 className="text-xl font-semibold flex items-center">
                 <Coins className="h-5 w-5 mr-2 text-yellow-400" />
                 Your Liquidity
               </h2>
-              <button className="text-sm text-blue-400 hover:text-blue-300">
-                View All
-              </button>
-            </div>
-            
-            <div className="h-[250px]">
-              <BarChart data={liquidityPositions.map(pos => ({
-                name: pos.pair,
-                value: pos.value,
-                fees: pos.fees
-              }))} />
-            </div>
-          </div>
+              <Button variant="ghost" className="text-blue-500 hover:text-blue-400">View All</Button>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[250px]">
+                <BarChart data={liquidityPositions.map(pos => ({
+                  name: pos.pair,
+                  value: pos.value,
+                  fees: pos.fees
+                }))} />
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

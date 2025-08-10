@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#3B82F6" />
       </head>
-      <body className="bg-gray-50 min-h-screen">
+      <body className="bg-background text-foreground min-h-screen">
         <Providers>
           <Navbar />
           <main>

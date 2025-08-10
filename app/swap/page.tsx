@@ -6,7 +6,7 @@ import { useTokenStore } from '@/stores/tokenStore';
 import { useSwapStore } from '@/stores/swapStore';
 import { useSwap } from '@/hooks/useSwap';
 import { useState } from 'react';
-import { ChevronsDown, ArrowRightLeft } from 'lucide-react';
+import { ChevronsDown } from 'lucide-react';
 import { formatTokenAmount } from '@/lib/formatters';
 
 export default function SwapPage() {
@@ -15,13 +15,27 @@ export default function SwapPage() {
   const { executeSwap } = useSwap();
   const [amountIn, setAmountIn] = useState<bigint>(0n);
   const [amountOut, setAmountOut] = useState<bigint>(0n);
+  const [amountInText, setAmountInText] = useState<string>('');
+
+  const parseToUnits = (value: string, decimals: number): bigint => {
+    if (!value) return 0n;
+    const normalized = value.replace(/[^0-9.]/g, '');
+    if (normalized === '' || normalized === '.') return 0n;
+    const [intPart, fracPartRaw = ''] = normalized.split('.');
+    const decimalsBig = 10n ** BigInt(decimals);
+    const fracPart = fracPartRaw.slice(0, decimals).padEnd(decimals, '0');
+    const intUnits = BigInt(intPart || '0') * decimalsBig;
+    const fracUnits = BigInt(fracPart || '0');
+    return intUnits + fracUnits;
+  };
 
   const handleAmountChange = (value: string) => {
-    const amount = value === '' ? 0n : BigInt(Number(value) * 10 ** fromToken.decimals);
+    setAmountInText(value);
+    const amount = parseToUnits(value, fromToken.decimals);
     setAmountIn(amount);
     
     // Calculate expected output (mock implementation)
-    const output = amount > 0n ? amount * 95n / 100n : 0n; // 5% slippage
+    const output = amount > 0n ? (amount * 95n) / 100n : 0n; // 5% slippage
     setAmountOut(output);
   };
 
@@ -50,65 +64,68 @@ export default function SwapPage() {
     const tempAmount = amountIn;
     setAmountIn(amountOut);
     setAmountOut(tempAmount);
+
+    const tempText = amountInText;
+    setAmountInText(formattedAmountOut);
+    // formattedAmountIn will update after states; this keeps a usable string
   };
 
   const formattedAmountIn = amountIn ? formatTokenAmount(amountIn, fromToken.decimals, 6) : '0.0';
   const formattedAmountOut = amountOut ? formatTokenAmount(amountOut, toToken.decimals, 6) : '0.0';
   const price = amountIn && amountOut ? Number(amountOut) / Number(amountIn) : 0;
+  const rateLine = `1 ${toToken.symbol} = ${price !== 0 ? (1 / price).toFixed(6) : '0.000000'} ${fromToken.symbol}`;
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-md mx-auto py-12 px-4">
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl overflow-hidden">
-          <div className="p-6 border-b border-gray-700">
-            <h1 className="text-2xl font-bold flex items-center">
-              <ArrowRightLeft className="mr-2 text-blue-400" />
-              Swap Tokens
-            </h1>
-            <p className="text-gray-400 text-sm mt-1">
-              Trade tokens instantly with minimal slippage
-            </p>
+        {/* Segmented tabs */}
+        <div className="flex justify-center mb-6">
+          <div className="inline-flex items-center bg-card border border-border rounded-full shadow-sm overflow-hidden">
+            <button className="px-4 py-1 text-sm font-medium bg-foreground text-background">Swap</button>
+            <button className="px-4 py-1 text-sm text-muted hover:text-foreground">Send</button>
+            <button className="px-4 py-1 text-sm text-muted hover:text-foreground">Buy</button>
           </div>
-          
+        </div>
+
+        {/* Card container */}
+        <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden">
           <div className="p-6">
-            {/* From Token Input */}
-            <div className="mb-4">
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium text-gray-300">You pay</span>
-                <span className="text-sm text-gray-500">
-                  Balance: {formatTokenAmount(1000000000000000000n, fromToken.decimals, 4)}
-                </span>
+            {/* Sell */}
+            <div className="mb-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-muted">Sell</span>
+                <div className="flex items-center gap-3 text-xs text-muted">
+                  <span>Max</span>
+                </div>
               </div>
               <TokenInput 
                 token={fromToken} 
                 onChangeToken={setFromToken} 
                 amount={amountIn}
-                displayValue={formattedAmountIn}
+                displayValue={amountInText}
                 onAmountChange={handleAmountChange}
-                theme="dark"
+                theme="light"
+                size="large"
+                className="rounded-2xl border-border bg-card"
               />
             </div>
-            
-            {/* Swap Direction */}
-            <div className="flex justify-center my-3 relative">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-full h-px bg-gray-700"></div>
-              </div>
-              <button 
+
+            {/* Divider with switch */}
+            <div className="relative my-2">
+              <div className="w-full h-px bg-border" />
+              <button
                 onClick={swapTokens}
-                className="relative z-10 bg-gray-800 border border-gray-700 p-2 rounded-full hover:bg-gray-700 transition-colors"
+                className="absolute left-1/2 -translate-x-1/2 -top-4 bg-card border border-border shadow-sm p-2 rounded-full hover:bg-background"
               >
-                <ChevronsDown className="h-5 w-5 text-blue-400" />
+                <ChevronsDown className="h-5 w-5 text-foreground" />
               </button>
             </div>
-            
-            {/* To Token Input */}
-            <div className="mb-6">
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium text-gray-300">You receive</span>
-                <span className="text-sm text-gray-500">
-                  Balance: {formatTokenAmount(500000000000000000n, toToken.decimals, 4)}
-                </span>
+
+            {/* Buy */}
+            <div className="mt-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-muted">Buy</span>
+                <span className="text-xs text-muted">Balance: {formatTokenAmount(500000000000000000n, toToken.decimals, 4)}</span>
               </div>
               <TokenInput 
                 token={toToken} 
@@ -116,45 +133,27 @@ export default function SwapPage() {
                 amount={amountOut}
                 displayValue={formattedAmountOut}
                 readOnly
-                theme="dark"
+                theme="light"
+                size="large"
+                className="rounded-2xl border-border bg-card"
               />
             </div>
-            
-            {/* Price Info */}
-            <div className="bg-gray-800/50 rounded-lg p-4 mb-6 border border-gray-700">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Price</span>
-                <span className="font-medium">
-                  1 {fromToken.symbol} = {price.toFixed(6)} {toToken.symbol}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm mt-2">
-                <span className="text-gray-400">Slippage</span>
-                <span className="font-medium">0.5%</span>
-              </div>
+
+            {/* Button */}
+            <div className="mt-6">
+              <SwapButton 
+                onClick={handleSwap}
+                isLoading={isSwapping}
+                disabled={!amountIn || amountIn === 0n}
+                theme="blackPill"
+              />
             </div>
-            
-            {/* Swap Button */}
-            <SwapButton 
-              onClick={handleSwap}
-              isLoading={isSwapping}
-              disabled={!amountIn || amountIn === 0n}
-              theme="gradient"
-            />
           </div>
         </div>
-        
-        {/* Liquidity Provider Info */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 mt-6">
-          <h2 className="text-lg font-bold mb-4 flex items-center">
-            Become a Liquidity Provider
-          </h2>
-          <p className="text-gray-400 text-sm mb-4">
-            Provide liquidity to pools and earn trading fees. Lower fees for liquidity providers.
-          </p>
-          <button className="w-full py-3 px-4 rounded-xl text-white font-semibold bg-gradient-to-r from-gray-700 to-gray-800 border border-gray-600 hover:from-gray-600 hover:to-gray-700 transition-colors">
-            Add Liquidity
-          </button>
+
+        {/* Bottom rate line */}
+        <div className="text-center text-xs text-muted mt-3">
+          {rateLine}
         </div>
       </div>
     </div>

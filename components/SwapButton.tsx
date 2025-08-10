@@ -6,21 +6,24 @@ interface SwapButtonProps {
   onClick: () => void;
   isLoading: boolean;
   disabled: boolean;
-  theme?: 'default' | 'gradient';
+  theme?: 'default' | 'gradient' | 'blackPill';
 }
 
 export default function SwapButton({ onClick, isLoading, disabled, theme = 'default' }: SwapButtonProps) {
+  const base = 'w-full py-4 px-6 rounded-full text-white font-semibold transition-colors flex items-center justify-center shadow-sm';
+  const variant = disabled || isLoading
+    ? 'bg-gray-400 cursor-not-allowed'
+    : theme === 'gradient'
+      ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+      : theme === 'blackPill'
+        ? 'bg-black hover:bg-gray-900'
+        : 'bg-blue-500 hover:bg-blue-600';
+  
   return (
     <button
       onClick={onClick}
       disabled={disabled || isLoading}
-      className={`w-full py-3 px-4 rounded-xl text-white font-semibold ${
-        disabled || isLoading
-          ? 'bg-gray-400 cursor-not-allowed'
-          : theme === 'gradient'
-            ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-            : 'bg-blue-500 hover:bg-blue-600'
-      } transition-colors flex items-center justify-center`}
+      className={`${base} ${variant}`}
     >
       {isLoading ? (
         <>
