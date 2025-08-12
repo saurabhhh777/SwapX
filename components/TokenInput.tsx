@@ -14,6 +14,7 @@ interface TokenInputProps {
   theme?: 'light' | 'dark';
   size?: 'default' | 'large';
   className?: string;
+  excludeToken?: Token; // Token to exclude from selection
 }
 
 export default function TokenInput({ 
@@ -26,7 +27,8 @@ export default function TokenInput({
   onAmountChange,
   theme = 'light',
   size = 'default',
-  className = ''
+  className = '',
+  excludeToken
 }: TokenInputProps) {
   const value = displayValue ?? (amount ? (Number(amount) / 10 ** token.decimals).toString() : '');
   const isDark = theme === 'dark';
@@ -45,7 +47,11 @@ export default function TokenInput({
           readOnly={readOnly}
           className={`flex-1 p-0 bg-transparent border-none focus:outline-none ${inputTextSize} ${isDark ? 'text-white placeholder-gray-500' : 'text-foreground placeholder-muted'}`}
         />
-        <TokenSelector selectedToken={token} onSelect={onChangeToken} />
+        <TokenSelector 
+          selectedToken={token} 
+          onSelect={onChangeToken} 
+          excludeToken={excludeToken}
+        />
       </div>
     </div>
   );

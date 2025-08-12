@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from 'zustand';
-import { tokens, Token } from '@/constants/tokens';
+import { allTokens, defaultTokens, Token } from '@/constants/tokens';
 
 interface TokenState {
   fromToken: Token;
@@ -15,8 +15,8 @@ interface TokenState {
 }
 
 export const useTokenStore = create<TokenState>((set) => ({
-  fromToken: tokens[0],
-  toToken: tokens[1],
+  fromToken: defaultTokens.ethereum,
+  toToken: allTokens.find(t => t.symbol === 'USDC' && t.chain === 'ethereum') || defaultTokens.ethereum,
   amountIn: null,
   amountOut: null,
   setFromToken: (token) => set({ fromToken: token }),

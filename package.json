@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@solana/spl-token": "^0.4.13",
+    "@solana/web3.js": "^1.98.4",
     "@wagmi/core": "^2.18.1",
     "clsx": "^2.1.1",
     "ethers": "^6.15.0",

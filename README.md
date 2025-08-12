@@ -1,84 +1,135 @@
-# 🔄 SwapX - A Decentralized Exchange (DEX) on Ethereum
+# SwapX - Multi-Chain DEX
 
-**SwapX** is a decentralized exchange (DEX) inspired by [Uniswap V2](https://docs.uniswap.org/protocol/V2/), built for Ethereum-compatible blockchains. It enables users to swap ERC-20 tokens, provide liquidity, and earn fees — all in a fast, trustless, and non-custodial way.
+A modern decentralized exchange supporting Ethereum, Polygon, and Solana with a clean, responsive UI.
 
+## Features
 
----
+- **Multi-Chain Support**: Swap tokens on Ethereum, Polygon, and Solana
+- **Modern UI**: Clean, responsive design with dark/light mode
+- **Real-time Quotes**: Get live swap quotes using Jupiter API for Solana
+- **Wallet Integration**: Support for MetaMask (Ethereum/Polygon) and Phantom (Solana)
+- **Token Management**: Comprehensive token lists for all supported chains
 
-## 🚀 Features
+## Tech Stack
 
-- 💱 Swap any ERC-20 token pair
-- 🧪 Deploy on Ethereum Sepolia testnet
-- 💧 Provide & remove liquidity
-- 🧠 AMM model (Constant Product Formula)
-- 🔐 Non-custodial, Smart Contract-driven
-- 🌐 Connect via MetaMask
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS with custom semantic color palette
+- **State Management**: Zustand with persistence
+- **Blockchain**: 
+  - Ethereum/Polygon: wagmi, viem
+  - Solana: @solana/web3.js, @solana/spl-token
+- **APIs**: 
+  - Helius RPC for Solana
+  - Jupiter API for Solana swaps
+- **UI Components**: Shadcn/ui, Lucide React icons
+- **Fonts**: Poppins (headings), Jost (body text)
 
----
+## Setup
 
-## 🧰 Tech Stack
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/swapx.git
+   cd swapx
+   ```
 
-| Layer     | Tech                         |
-|-----------|------------------------------|
-| 💻 Frontend | Next.js, TailwindCSS, Ethers.js, Wagmi, RainbowKit |
-| 🧠 Smart Contracts | Solidity, Foundry (Forge) |
-| 📦 Tokens | ERC-20 Standard |
-| 🌐 Network | Ethereum Sepolia Testnet |
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
----
+3. **Environment Configuration**
+   Create a `.env.local` file with the following variables:
+   ```env
+   # Helius API Configuration
+   NEXT_PUBLIC_HELIUS_RPC_URL=https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY
+   
+   # Ethereum/Polygon RPC URLs
+   NEXT_PUBLIC_MAINNET_RPC_URL=https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY
+   NEXT_PUBLIC_POLYGON_RPC_URL=https://polygon-mainnet.g.alchemy.com/v2/YOUR_API_KEY
+   ```
 
-## Diagram Stuff 
-<img width="1907" height="929" alt="Image" src="https://github.com/user-attachments/assets/93ce34d8-2d7c-4ca8-ba0e-17a0bc1d8d7e" />
+4. **Get API Keys**
+   - **Helius**: Sign up at [helius.xyz](https://helius.xyz) for Solana RPC
+   - **Alchemy**: Sign up at [alchemy.com](https://alchemy.com) for Ethereum/Polygon RPC
 
+5. **Run the development server**
+   ```bash
+   npm run dev
+   ```
 
-code flow 
+## Solana Integration
 
-<img width="3840" height="1141" alt="swapxsequence" src="https://github.com/user-attachments/assets/097dd704-1e71-4550-ac11-d1f8addcde9a" />
+The app uses Helius RPC and Jupiter API for Solana token swaps:
 
+### Helius Service (`lib/helius.ts`)
+- RPC connection to Solana network
+- Token balance queries
+- Transaction execution
 
+### Jupiter Integration
+- Real-time swap quotes
+- Optimal routing across DEXs
+- Transaction building and execution
 
+### Usage Example
+```typescript
+import { heliusSwapService } from '@/lib/helius';
 
+// Get a quote
+const quote = await heliusSwapService.getQuote(
+  'So11111111111111111111111111111111111111112', // SOL
+  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+  1000000000, // 1 SOL (in lamports)
+  50 // 0.5% slippage
+);
 
-
-
-
-
-
----
-
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+// Execute swap
+const result = await heliusSwapService.executeSwap(swapTx, wallet);
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+swapx/
+├── app/                    # Next.js app router pages
+├── components/             # React components
+│   ├── ui/                # Shadcn/ui components
+│   └── ...                # Custom components
+├── constants/             # Token lists, ABIs, addresses
+├── hooks/                 # Custom React hooks
+│   ├── useSwap.ts         # Ethereum/Polygon swaps
+│   └── useSolanaSwap.ts   # Solana swaps
+├── lib/                   # Utilities and services
+│   ├── helius.ts          # Helius API service
+│   ├── wagmi.ts           # Ethereum configuration
+│   └── ...                # Other utilities
+├── stores/                # Zustand state stores
+└── public/                # Static assets
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Supported Tokens
 
-## Learn More
+### Ethereum/Polygon
+- ETH/MATIC (native)
+- USDC
+- SWAPX (custom token)
 
-To learn more about Next.js, take a look at the following resources:
+### Solana
+- SOL (native)
+- USDC
+- USDT
+- RAY (Raydium)
+- SRM (Serum)
+- ORCA
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT License - see LICENSE file for details.

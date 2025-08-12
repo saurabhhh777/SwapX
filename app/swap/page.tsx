@@ -1,21 +1,37 @@
 'use client';
 
 import TokenInput from '@/components/TokenInput';
-import SwapButton from '@/components/SwapButton';
+import { SwapButton } from '@/components/SwapButton';
 import { useTokenStore } from '@/stores/tokenStore';
-import { useSwapStore } from '@/stores/swapStore';
-import { useSwap } from '@/hooks/useSwap';
-import { useState } from 'react';
-import { ChevronsDown } from 'lucide-react';
 import { formatTokenAmount } from '@/lib/formatters';
+import { ChevronsDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useSolanaSwap } from '@/hooks/useSolanaSwap';
+import { useSwap } from '@/hooks/useSwap';
 
 export default function SwapPage() {
-  const { fromToken, toToken, setFromToken, setToToken } = useTokenStore();
-  const { isSwapping, startSwap, completeSwap, failSwap } = useSwapStore();
-  const { executeSwap } = useSwap();
-  const [amountIn, setAmountIn] = useState<bigint>(0n);
-  const [amountOut, setAmountOut] = useState<bigint>(0n);
+  const { fromToken, toToken, setFromToken, setToToken, amountIn, setAmountIn, amountOut, setAmountOut } = useTokenStore();
   const [amountInText, setAmountInText] = useState<string>('');
+  const [isCalculating, setIsCalculating] = useState(false);
+
+  // Use appropriate swap hooks
+  const { getQuote: getSolanaQuote } = useSolanaSwap();
+  const { executeSwap: executeEthSwap } = useSwap();
+
+  // Debug logging
+  useEffect(() => {
+    console.log('Current tokens:', { fromToken, toToken });
+  }, [fromToken, toToken]);
+
+  const handleFromTokenChange = (token: any) => {
+    console.log('From token changed to:', token);
+    setFromToken(token);
+  };
+
+  const handleToTokenChange = (token: any) => {
+    console.log('To token changed to:', token);
+    setToToken(token);
+  };
 
   const parseToUnits = (value: string, decimals: number): bigint => {
     if (!value) return 0n;
@@ -29,33 +45,59 @@ export default function SwapPage() {
     return intUnits + fracUnits;
   };
 
+  // Calculate swap output when input changes
+  const calculateSwapOutput = async (inputAmount: bigint) => {
+    if (!inputAmount || inputAmount === 0n || !fromToken || !toToken) {
+      setAmountOut(0n);
+      return;
+    }
+
+    // Check if tokens are on the same chain
+    if (fromToken.chain !== toToken.chain) {
+      // Cross-chain swap - show warning or disable
+      setAmountOut(0n);
+      return;
+    }
+
+    setIsCalculating(true);
+    try {
+      if (fromToken.chain === 'solana') {
+        // Use Solana quote
+        const amount = Number(inputAmount) / Math.pow(10, fromToken.decimals);
+        const quote = await getSolanaQuote();
+        if (quote && quote.outAmount) {
+          setAmountOut(BigInt(quote.outAmount));
+        } else {
+          // Fallback calculation
+          const output = (inputAmount * 95n) / 100n; // 5% slippage
+          setAmountOut(output);
+        }
+      } else {
+        // Ethereum/Polygon - use simple calculation for now
+        const output = (inputAmount * 95n) / 100n; // 5% slippage
+        setAmountOut(output);
+      }
+    } catch (error) {
+      console.error('Error calculating swap output:', error);
+      // Fallback calculation
+      const output = (inputAmount * 95n) / 100n;
+      setAmountOut(output);
+    } finally {
+      setIsCalculating(false);
+    }
+  };
+
   const handleAmountChange = (value: string) => {
     setAmountInText(value);
     const amount = parseToUnits(value, fromToken.decimals);
     setAmountIn(amount);
     
-    // Calculate expected output (mock implementation)
-    const output = amount > 0n ? (amount * 95n) / 100n : 0n; // 5% slippage
-    setAmountOut(output);
-  };
-
-  const handleSwap = async () => {
-    if (!amountIn || amountIn === 0n) return;
-    
-    startSwap();
-    try {
-      const hash = await executeSwap();
-      if (hash) {
-        completeSwap(hash);
-      } else {
-        failSwap('Swap failed');
-      }
-    } catch (error) {
-      failSwap(error instanceof Error ? error.message : 'Swap failed');
-    }
+    // Calculate output asynchronously
+    calculateSwapOutput(amount);
   };
 
   const swapTokens = () => {
+    // Swap tokens
     const tempToken = fromToken;
     setFromToken(toToken);
     setToToken(tempToken);
@@ -67,13 +109,25 @@ export default function SwapPage() {
 
     const tempText = amountInText;
     setAmountInText(formattedAmountOut);
-    // formattedAmountIn will update after states; this keeps a usable string
   };
+
+  // Recalculate when tokens change
+  useEffect(() => {
+    if (amountIn && amountIn > 0n) {
+      calculateSwapOutput(amountIn);
+    }
+  }, [fromToken, toToken]);
 
   const formattedAmountIn = amountIn ? formatTokenAmount(amountIn, fromToken.decimals, 6) : '0.0';
   const formattedAmountOut = amountOut ? formatTokenAmount(amountOut, toToken.decimals, 6) : '0.0';
   const price = amountIn && amountOut ? Number(amountOut) / Number(amountIn) : 0;
   const rateLine = `1 ${toToken.symbol} = ${price !== 0 ? (1 / price).toFixed(6) : '0.000000'} ${fromToken.symbol}`;
+
+  // Check if swap is valid
+  const isValidSwap = fromToken && toToken && 
+                     fromToken.address !== toToken.address && 
+                     fromToken.chain === toToken.chain &&
+                     amountIn && amountIn > 0n;
   
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -100,13 +154,14 @@ export default function SwapPage() {
               </div>
               <TokenInput 
                 token={fromToken} 
-                onChangeToken={setFromToken} 
-                amount={amountIn}
+                onChangeToken={handleFromTokenChange} 
+                amount={amountIn || 0n}
                 displayValue={amountInText}
                 onAmountChange={handleAmountChange}
                 theme="light"
                 size="large"
                 className="rounded-2xl border-border bg-card"
+                excludeToken={toToken}
               />
             </div>
 
@@ -129,31 +184,48 @@ export default function SwapPage() {
               </div>
               <TokenInput 
                 token={toToken} 
-                onChangeToken={setToToken} 
-                amount={amountOut}
+                onChangeToken={handleToTokenChange} 
+                amount={amountOut || 0n}
                 displayValue={formattedAmountOut}
                 readOnly
                 theme="light"
                 size="large"
                 className="rounded-2xl border-border bg-card"
+                excludeToken={fromToken}
               />
             </div>
 
+            {/* Chain validation warning */}
+            {fromToken && toToken && fromToken.chain !== toToken.chain && (
+              <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                <p className="text-sm text-yellow-600">
+                  ⚠️ Cross-chain swaps are not supported yet. Please select tokens from the same chain.
+                </p>
+              </div>
+            )}
+
             {/* Button */}
             <div className="mt-6">
-              <SwapButton 
-                onClick={handleSwap}
-                isLoading={isSwapping}
-                disabled={!amountIn || amountIn === 0n}
-                theme="blackPill"
-              />
+              <SwapButton theme="blackPill" />
             </div>
           </div>
         </div>
 
         {/* Bottom rate line */}
         <div className="text-center text-xs text-muted mt-3">
-          {rateLine}
+          {isCalculating ? 'Calculating...' : rateLine}
+        </div>
+
+        {/* Debug info - remove in production */}
+        <div className="mt-8 p-4 bg-card border border-border rounded-lg">
+          <h3 className="text-sm font-medium text-foreground mb-2">Debug Info:</h3>
+          <div className="text-xs text-muted space-y-1">
+            <div>From Token: {fromToken?.symbol} ({fromToken?.chain})</div>
+            <div>To Token: {toToken?.symbol} ({toToken?.chain})</div>
+            <div>Amount In: {amountIn?.toString() || '0'}</div>
+            <div>Amount Out: {amountOut?.toString() || '0'}</div>
+            <div>Valid Swap: {isValidSwap ? 'Yes' : 'No'}</div>
+          </div>
         </div>
       </div>
     </div>
