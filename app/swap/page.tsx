@@ -5,9 +5,9 @@ import { SwapButton } from '@/components/SwapButton';
 import { useTokenStore } from '@/stores/tokenStore';
 import { formatTokenAmount } from '@/lib/formatters';
 import { ChevronsDown } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSolanaSwap } from '@/hooks/useSolanaSwap';
-import { useSwap } from '@/hooks/useSwap';
+import { Token } from '@/constants/tokens';
 
 export default function SwapPage() {
   const { fromToken, toToken, setFromToken, setToToken, amountIn, setAmountIn, amountOut, setAmountOut } = useTokenStore();
@@ -16,19 +16,18 @@ export default function SwapPage() {
 
   // Use appropriate swap hooks
   const { getQuote: getSolanaQuote } = useSolanaSwap();
-  const { executeSwap: executeEthSwap } = useSwap();
 
   // Debug logging
   useEffect(() => {
     console.log('Current tokens:', { fromToken, toToken });
   }, [fromToken, toToken]);
 
-  const handleFromTokenChange = (token: any) => {
+  const handleFromTokenChange = (token: Token) => {
     console.log('From token changed to:', token);
     setFromToken(token);
   };
 
-  const handleToTokenChange = (token: any) => {
+  const handleToTokenChange = (token: Token) => {
     console.log('To token changed to:', token);
     setToToken(token);
   };
@@ -46,7 +45,7 @@ export default function SwapPage() {
   };
 
   // Calculate swap output when input changes
-  const calculateSwapOutput = async (inputAmount: bigint) => {
+  const calculateSwapOutput = useCallback(async (inputAmount: bigint) => {
     if (!inputAmount || inputAmount === 0n || !fromToken || !toToken) {
       setAmountOut(0n);
       return;
@@ -63,7 +62,6 @@ export default function SwapPage() {
     try {
       if (fromToken.chain === 'solana') {
         // Use Solana quote
-        const amount = Number(inputAmount) / Math.pow(10, fromToken.decimals);
         const quote = await getSolanaQuote();
         if (quote && quote.outAmount) {
           setAmountOut(BigInt(quote.outAmount));
@@ -85,7 +83,7 @@ export default function SwapPage() {
     } finally {
       setIsCalculating(false);
     }
-  };
+  }, [fromToken, toToken, getSolanaQuote, setAmountOut, setIsCalculating]);
 
   const handleAmountChange = (value: string) => {
     setAmountInText(value);
@@ -107,7 +105,6 @@ export default function SwapPage() {
     setAmountIn(amountOut);
     setAmountOut(tempAmount);
 
-    const tempText = amountInText;
     setAmountInText(formattedAmountOut);
   };
 
@@ -116,9 +113,8 @@ export default function SwapPage() {
     if (amountIn && amountIn > 0n) {
       calculateSwapOutput(amountIn);
     }
-  }, [fromToken, toToken]);
+  }, [fromToken, toToken, amountIn, calculateSwapOutput]);
 
-  const formattedAmountIn = amountIn ? formatTokenAmount(amountIn, fromToken.decimals, 6) : '0.0';
   const formattedAmountOut = amountOut ? formatTokenAmount(amountOut, toToken.decimals, 6) : '0.0';
   const price = amountIn && amountOut ? Number(amountOut) / Number(amountIn) : 0;
   const rateLine = `1 ${toToken.symbol} = ${price !== 0 ? (1 / price).toFixed(6) : '0.000000'} ${fromToken.symbol}`;
@@ -155,7 +151,6 @@ export default function SwapPage() {
               <TokenInput 
                 token={fromToken} 
                 onChangeToken={handleFromTokenChange} 
-                amount={amountIn || 0n}
                 displayValue={amountInText}
                 onAmountChange={handleAmountChange}
                 theme="light"
@@ -185,7 +180,6 @@ export default function SwapPage() {
               <TokenInput 
                 token={toToken} 
                 onChangeToken={handleToTokenChange} 
-                amount={amountOut || 0n}
                 displayValue={formattedAmountOut}
                 readOnly
                 theme="light"

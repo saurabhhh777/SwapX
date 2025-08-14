@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Github, BookOpen, BarChart, Lock, RefreshCw, ShieldCheck, Zap, Globe, Code2 } from "lucide-react";
+import { Github, BookOpen, BarChart, Lock, RefreshCw, ShieldCheck, Zap, Globe } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {

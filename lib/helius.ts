@@ -1,5 +1,4 @@
-import { Connection, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { Connection, PublicKey, VersionedTransaction } from '@solana/web3.js';
 
 // Helius RPC endpoint
 const HELIUS_RPC_URL = process.env.NEXT_PUBLIC_HELIUS_RPC_URL || 'https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY';
@@ -49,7 +48,7 @@ export class HeliusSwapService {
   }
 
   // Get swap transaction
-  async getSwapTransaction(quoteResponse: any) {
+  async getSwapTransaction(quoteResponse: Record<string, unknown>) {
     try {
       const response = await fetch(`${JUPITER_API_URL}/swap`, {
         method: 'POST',
@@ -76,13 +75,13 @@ export class HeliusSwapService {
 
   // Execute swap transaction
   async executeSwap(
-    swapTransaction: any,
-    wallet: any // Phantom or other Solana wallet
+    swapTransaction: Record<string, unknown>,
+    wallet: { signTransaction: (transaction: VersionedTransaction) => Promise<VersionedTransaction> } // Phantom or other Solana wallet
   ) {
     try {
       // Deserialize the transaction
       const transaction = VersionedTransaction.deserialize(
-        Buffer.from(swapTransaction.swapTransaction, 'base64')
+        Buffer.from(swapTransaction.swapTransaction as string, 'base64')
       );
 
       // Sign and send the transaction

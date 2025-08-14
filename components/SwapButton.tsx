@@ -16,7 +16,7 @@ export function SwapButton({ theme = 'default', className }: SwapButtonProps) {
   
   // Use appropriate swap hook based on token chain
   const { executeSwap: executeEthSwap } = useSwap();
-  const { executeSwap: executeSolanaSwap, getQuote } = useSolanaSwap();
+  const { getQuote } = useSolanaSwap();
 
   const handleSwap = async () => {
     if (!fromToken || !toToken || !amountIn) return;

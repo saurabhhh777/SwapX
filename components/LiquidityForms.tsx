@@ -56,7 +56,6 @@ export function AddLiquidityForm() {
           token={tokenA} 
           onChangeToken={setFromToken} 
           label="Token A"
-          amount={amountA}
           onAmountChange={handleAmountAChange}
           balance={1000000000000000000n}
         />
@@ -72,7 +71,6 @@ export function AddLiquidityForm() {
           token={tokenB} 
           onChangeToken={setToToken} 
           label="Token B"
-          amount={amountB}
           onAmountChange={handleAmountBChange}
           balance={500000000000000000n}
         />
@@ -209,11 +207,10 @@ export function RemoveLiquidityForm() {
 // Helper Components
 import { Token } from '@/constants/tokens';
 
-function TokenInputWithBalance({ token, onChangeToken, label, amount, onAmountChange, balance }: {
+function TokenInputWithBalance({ token, onChangeToken, label, onAmountChange, balance }: {
   token: Token;
   onChangeToken: (token: Token) => void;
   label: string;
-  amount: bigint;
   onAmountChange: (value: string) => void;
   balance: bigint;
 }) {
@@ -228,7 +225,6 @@ function TokenInputWithBalance({ token, onChangeToken, label, amount, onAmountCh
       <TokenInput 
         token={token} 
         onChangeToken={onChangeToken} 
-        amount={amount}
         onAmountChange={onAmountChange}
         theme="light"
         size="large"

@@ -7,7 +7,6 @@ interface TokenInputProps {
   token: Token;
   onChangeToken: (token: Token) => void;
   label?: string;
-  amount?: bigint;
   displayValue?: string;
   readOnly?: boolean;
   onAmountChange?: (value: string) => void;
@@ -21,7 +20,6 @@ export default function TokenInput({
   token, 
   onChangeToken, 
   label,
-  amount,
   displayValue,
   readOnly = false,
   onAmountChange,
@@ -30,7 +28,7 @@ export default function TokenInput({
   className = '',
   excludeToken
 }: TokenInputProps) {
-  const value = displayValue ?? (amount ? (Number(amount) / 10 ** token.decimals).toString() : '');
+  const value = displayValue ?? '';
   const isDark = theme === 'dark';
   const containerClasses = `${isDark ? 'bg-gray-800 border-gray-700' : 'bg-card border-border'} border rounded-2xl p-4 ${className}`;
   const inputTextSize = size === 'large' ? 'text-4xl md:text-5xl font-semibold' : 'text-xl';
